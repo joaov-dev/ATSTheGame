@@ -11,7 +11,7 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
 game = True
 
-bg = pygame.image.load('#grass.png').convert_alpha()
+bg = pygame.image.load('grass.png').convert_alpha()
 bg = pygame.transform.scale(bg, (500,700 ))
 ball = pygame.image.load('ball.png').convert_alpha()
 ball = pygame.transform.scale(ball, (20, 20))
