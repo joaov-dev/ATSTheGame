@@ -1,9 +1,9 @@
 import pygame 
 
 pygame.init()
-
-
-
+still = 0
+jumping = 1
+falling = 2
 WIDTH = 800
 HEIGHT = 600
 gravity = 5
@@ -11,17 +11,12 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
 game = True
 
-bg = pygame.image.load('assets/grass.png').convert_alpha()
+bg = pygame.image.load('pygame/grass.png').convert_alpha()
 bg = pygame.transform.scale(bg, (800,700 ))
-ball = pygame.image.load('assets/ball.png').convert_alpha()
+ball = pygame.image.load('pygame/ball.png').convert_alpha()
 ball = pygame.transform.scale(ball, (20, 20))
 
-parede = pygame.image.load('assets/parede.jpeg').convert_alpha()
-
-
-
-
-
+parede = pygame.image.load('pygame/parede.jpeg').convert_alpha()
 
 class Tile(pygame.sprite.Sprite):
 
@@ -37,6 +32,7 @@ class bola(pygame.sprite.Sprite):
     def __init__(self, img, row, column, blocks):
     
         pygame.sprite.Sprite.__init__(self)
+        self.state = still
 
         self.image = img
         self.rect = self.image.get_rect()
@@ -50,6 +46,8 @@ class bola(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         self.rect.x += self.speedx
         hits = pygame.sprite.spritecollide(self, self.blocks, False)
+        if self.speedy > 0:
+            self.state = falling
         if self.rect.left < 0:
             self.rect.left = 0
         elif self.rect.right >= WIDTH:
@@ -58,44 +56,43 @@ class bola(pygame.sprite.Sprite):
             if self.speedy > 0:
                 self.rect.bottom = i.rect.top
                 self.speedy = 0
-            elif self.speedy < 0:
+                self.state = still
+            if self.speedy < 0:
                 self.rect.top = i.rect.bottom
                 self.speedy = 0
+                self.state = still
+            
     def jump(self):
-        self.speedy -= 40
+        if self.state == still:
+            self.speedy -= 40
+            self.state = jumping
     
-
-
-
 all_sprites = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
 
 
-
-BLOCK = 0
-EMPTY = -1
 MAP = [
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLOCK, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, EMPTY, BLOCK, EMPTY, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, BLOCK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY, EMPTY, BLOCK, EMPTY, EMPTY, BLOCK, EMPTY, EMPTY],
-    [BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, EMPTY],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
 for i in range(len(MAP)):
         for n in range(len(MAP[i])):
             tile_type = MAP[i][n]
-            if tile_type == BLOCK:
+            if tile_type == 1:
                 tile = Tile(parede, i, n)
                 all_sprites.add(tile)
                 blocks.add(tile)
@@ -105,7 +102,6 @@ clock = pygame.time.Clock()
 FPS = 60
 while game:
     clock.tick(FPS)
-
     for event in pygame.event.get():
 
 
@@ -135,6 +131,5 @@ while game:
     all_sprites.update()
     all_sprites.draw(window)
     pygame.display.update()
-
 
 pygame.quit()
