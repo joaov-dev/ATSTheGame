@@ -5,8 +5,8 @@ still = 0
 jumping = 1
 falling = 2
 WIDTH = 1000
-HEIGHT = 800
-gravity = 1
+HEIGHT = 880
+gravity = 5
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
 game = True
@@ -36,7 +36,7 @@ class Tile(pygame.sprite.Sprite):
             self.rect.y = 40 * i - incl
 
 class ladder(pygame.sprite.Sprite):
-    def __init__(self, tile_img, i, n, incl):
+    def __init__(self, tile_img):
         pygame.sprite.Sprite.__init__(self)
         tile_img = pygame.transform.scale(tile_img, (40, 40))
         self.image = tile_img
@@ -67,12 +67,12 @@ class bola(pygame.sprite.Sprite):
         elif self.rect.right >= WIDTH:
             self.rect.right = WIDTH - 1
         for i in hits:
-            if self.speedy > 0:
-                self.rect.bottom = i.rect.top
+            if self.speedy < 0 :
+                self.rect.top = i.rect.bottom
                 self.speedy = 0
                 self.state = still
-            if self.speedy < 0:
-                self.rect.top = i.rect.bottom
+            if self.speedy > 0 and self.rect.bottom :
+                self.rect.bottom = i.rect.top
                 self.speedy = 0
                 self.state = still
             
@@ -94,6 +94,7 @@ MAP = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -101,6 +102,7 @@ MAP = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
