@@ -10,9 +10,10 @@ gravity = 5
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
 game = True
-
+dk = pygame.image.load('assets/imagensDK/dkForward.png').convert_alpha()
+dk = pygame.transform.scale(dk, (60,60))
 bg = pygame.image.load('assets/grass.png').convert_alpha()
-bg = pygame.transform.scale(bg, (800,700 ))
+bg = pygame.transform.scale(bg, (800,700))
 ball = pygame.image.load('assets/imagensDK/run-right.png').convert_alpha()
 ball = pygame.transform.scale(ball, (40, 40))
 escada = pygame.image.load('assets/imagensDK/escada.png').convert_alpha()
@@ -49,8 +50,8 @@ class barril(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH
-        self.rect.bottom = 0
+        self.rect.x = 440
+        self.rect.bottom = 70
         self.blocks = blocks
         self.speedx = vel_barril
         self.speedy = 0
@@ -116,6 +117,19 @@ class bola(pygame.sprite.Sprite):
         if self.state == still:
             self.speedy -= 40
             self.state = jumping
+
+
+class DK(pygame.sprite.Sprite):
+    def __init__(self, img):
+    
+        pygame.sprite.Sprite.__init__(self)
+        self.state = still
+
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.x = 440
+        self.rect.bottom = 70
+
 all_barril = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
@@ -160,11 +174,12 @@ for i in range(len(MAP)):
                 blocks.add(tile1)
             incl-=1
 
-
+dk = DK(dk)
 ball = bola(ball, 12, 4, blocks)
 barrel = barril(barrel, 12, 4, blocks)
 all_sprites.add(ball)
 all_sprites.add(barrel)
+all_sprites.add(dk)
 all_barril.add(barrel)
 clock = pygame.time.Clock()
 FPS = 60
