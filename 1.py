@@ -17,6 +17,8 @@ ball = pygame.image.load('assets/imagensDK/run-right.png').convert_alpha()
 ball = pygame.transform.scale(ball, (40, 40))
 escada = pygame.image.load('assets/imagensDK/escada.png').convert_alpha()
 parede = pygame.image.load('assets/imagensDK/plataforma.png').convert_alpha()
+barrel = pygame.image.load("assets/imagensDK/barrel1.png").convert_alpha()
+vel_barril = -4
 
 class Tile(pygame.sprite.Sprite):
 
@@ -41,6 +43,40 @@ class ladder(pygame.sprite.Sprite):
         tile_img = pygame.transform.scale(tile_img, (40, 40))
         self.image = tile_img
         self.rect = self.image.get_rect()
+
+class barril(pygame.sprite.Sprite):
+    def __init__(self, img, row, column, blocks):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.x = WIDTH
+        self.rect.bottom = 0
+        self.blocks = blocks
+        self.speedx = vel_barril
+        self.speedy = 0
+    def update(self):
+        self.speedy += gravity
+        self.rect.y += self.speedy
+        self.rect.x += self.speedx
+        hits = pygame.sprite.spritecollide(self, self.blocks, False)
+        if self.speedy > 0:
+            self.state = falling
+        if self.rect.left < 0:
+            self.rect.left = 0
+        elif self.rect.right >= WIDTH:
+            self.rect.right = WIDTH - 1
+        for i in hits:
+            if self.speedy > 0:
+                self.rect.bottom = i.rect.top
+                self.speedy = 0
+                
+            if self.speedy < 0:
+                self.rect.top = i.rect.bottom
+                self.speedy = 0
+        if self.rect.x <= 0:
+            self.speedx = - vel_barril 
+        if self.rect.x >= WIDTH-39:
+            self.speedx = vel_barril 
 
 class bola(pygame.sprite.Sprite):
     def __init__(self, img, row, column, blocks):
@@ -80,7 +116,7 @@ class bola(pygame.sprite.Sprite):
         if self.state == still:
             self.speedy -= 40
             self.state = jumping
-    
+all_barril = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
 
@@ -126,7 +162,10 @@ for i in range(len(MAP)):
 
 
 ball = bola(ball, 12, 4, blocks)
+barrel = barril(barrel, 12, 4, blocks)
 all_sprites.add(ball)
+all_sprites.add(barrel)
+all_barril.add(barrel)
 clock = pygame.time.Clock()
 FPS = 60
 while game:
@@ -153,6 +192,10 @@ while game:
                     ball.speedx += 5
                 elif event.key == pygame.K_RIGHT:
                     ball.speedx -= 5
+
+    morreu = pygame.sprite.spritecollide(ball, all_barril, False)
+    if morreu != []:
+        pygame.quit()
 
     window.fill((0, 0, 0))
     #window.blit(bg, (0, 0))
