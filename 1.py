@@ -209,8 +209,8 @@ while game:
                     ball.speedx -= 5
 
     morreu = pygame.sprite.spritecollide(ball, all_barril, False)
-    if morreu != []:
-        pygame.quit()
+    #if morreu != []:
+     #   pygame.quit()
 
     window.fill((0, 0, 0))
     #window.blit(bg, (0, 0))
