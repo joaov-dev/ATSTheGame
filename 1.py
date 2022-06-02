@@ -71,7 +71,7 @@ class barril(pygame.sprite.Sprite):
                 self.rect.bottom = i.rect.top
                 self.speedy = 0
                 
-            if self.speedy < 0:
+            elif self.speedy < 0:
                 self.rect.top = i.rect.bottom
                 self.speedy = 0
         if self.rect.x <= 0:
