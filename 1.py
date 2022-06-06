@@ -119,19 +119,6 @@ class bola(pygame.sprite.Sprite):
         if self.state == still:
             self.speedy -= 40
             self.state = jumping
-    
-    def escada(self):
-        if self.state == still or self.state == climbing:
-            print(1)
-            self.rect.y = cstr[0].rect.y
-            self.rect.x = cstr[0].rect.x
-            self.state = climbing
-            if cstr != [] or cbck != []:
-                self.speedy = -5
-            else:
-                print(1)
-                self.state = still
-                self.speedy = 0
 
 
 
@@ -195,7 +182,7 @@ for i in range(len(MAP)):
                 all_sprites.add(tile1)
                 all_stairs.add(tile1)
             incl-=1
-
+trator = True
 dk = DK(dk)
 ball = bola(ball, 12, 4, blocks)
 barrel = barril(barrel, 12, 4, blocks)
@@ -210,7 +197,6 @@ while game:
     cstr = pygame.sprite.spritecollide(ball, all_stairs, False)
     cbck = pygame.sprite.spritecollide(ball, ball.blocks, False)
     for event in pygame.event.get():
-            print (ball.state)
 
             if event.type == pygame.QUIT:
                 game = False
@@ -218,9 +204,9 @@ while game:
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_LEFT and ball.state != climbing:
-                    ball.speedx -= 5
+                    ball.speedx -= 8
                 elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx += 5
+                    ball.speedx += 8
                 elif event.key == pygame.K_UP and ball.state != climbing:
                     ball.jump()
                 elif event.key == pygame.K_SPACE and cstr != [] and ball.state == still:
@@ -232,19 +218,21 @@ while game:
             if event.type == pygame.KEYUP:
 
                 if event.key == pygame.K_LEFT and ball.state != climbing:
-                    ball.speedx += 5
+                    ball.speedx += 8
                 elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx -= 5
+                    ball.speedx -= 8
     if ball.state == climbing:
-        if cstr != []:
+        if trator == True:
             ball.rect.y = cstr[0].rect.y
             ball.rect.x = cstr[0].rect.x
-            ball.state = climbing
+            trator = False
+        ball.state = climbing
         if cstr != [] or cbck != []:
             ball.speedy -= 1
         else:
             ball.state = still
             ball.speedy = 0
+            Trator = True
                 
 
 
