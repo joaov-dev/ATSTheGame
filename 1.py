@@ -7,7 +7,7 @@ falling = 2
 climbing = 3
 WIDTH = 1000
 HEIGHT = 800
-gravity = 5
+gravity = 2
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
 game = True
@@ -27,7 +27,7 @@ class Tile(pygame.sprite.Sprite):
 
     def __init__(self, tile_img, i, n, incl):
         pygame.sprite.Sprite.__init__(self)
-        tile_img = pygame.transform.scale(tile_img, (40, 40))
+        tile_img = pygame.transform.scale(tile_img, (40, 20))
         self.image = tile_img
         self.rect = self.image.get_rect()
         if i%2 ==0 :
@@ -118,7 +118,7 @@ class bola(pygame.sprite.Sprite):
             
     def jump(self):
         if self.state == still:
-            self.speedy -= 40
+            self.speedy -= 20
             self.state = jumping
 
 

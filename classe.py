@@ -16,13 +16,13 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         if i%2 ==0 :
             self.rect.x = 40 * n
-            self.rect.y = 40 * i + incl
+            self.rect.y = 20 * i + incl
         elif i == 20:
             self.rect.x = 40 * n
-            self.rect.y = 40 * i - incl
+            self.rect.y = 20 * i - incl
         else:
             self.rect.x = 40 * n
-            self.rect.y = 40 * i - incl
+            self.rect.y = 20 * i - incl
 
 class ladder(pygame.sprite.Sprite):
     def __init__(self, tile_img):
