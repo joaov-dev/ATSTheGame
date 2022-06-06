@@ -1,5 +1,5 @@
 import pygame 
-
+vidas = 3
 pygame.init()
 still = 0
 jumping = 1
@@ -7,12 +7,13 @@ falling = 2
 climbing = 3
 WIDTH = 1000
 HEIGHT = 800
-gravity = 2
+gravity = 1
+level = True
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
 game = True
 dk = pygame.image.load('assets/imagensDK/dkForward.png').convert_alpha()
-dk = pygame.transform.scale(dk, (60,60))
+dk = pygame.transform.scale(dk, (100,100))
 bg = pygame.image.load('assets/grass.png').convert_alpha()
 bg = pygame.transform.scale(bg, (800,700))
 ball = pygame.image.load('assets/imagensDK/run-right.png').convert_alpha()
@@ -20,7 +21,9 @@ ball = pygame.transform.scale(ball, (40, 40))
 escada = pygame.image.load('assets/imagensDK/escada.png').convert_alpha()
 parede = pygame.image.load('assets/imagensDK/plataforma.png').convert_alpha()
 barrel_img = pygame.image.load("assets/imagensDK/barrel1.png").convert_alpha()
-vel_barril = -4
+barrel_img = pygame.transform.scale(barrel_img, (40, 40))
+vida_img = pygame.font.Font('assets/PressStart2P.ttf', 28)
+vel_barril = -7
 tmp = 0
 
 class Tile(pygame.sprite.Sprite):
@@ -72,13 +75,12 @@ class barril(pygame.sprite.Sprite):
             if self.speedy > 0:
                 self.rect.bottom = i.rect.top
                 self.speedy = 0
-                
             elif self.speedy < 0:
                 self.rect.top = i.rect.bottom
                 self.speedy = 0
         if self.rect.x <= 0:
             self.speedx = - vel_barril 
-        if self.rect.x >= WIDTH-39:
+        if self.rect.right >= WIDTH-1:
             self.speedx = vel_barril 
 
 class bola(pygame.sprite.Sprite):
@@ -89,8 +91,8 @@ class bola(pygame.sprite.Sprite):
 
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.x = column * 40
-        self.rect.bottom = 350
+        self.rect.x = 700
+        self.rect.bottom = 700
         self.blocks = blocks
         self.speedx = 0
         self.speedy = 0
@@ -118,9 +120,8 @@ class bola(pygame.sprite.Sprite):
             
     def jump(self):
         if self.state == still:
-            self.speedy -= 20
+            self.speedy -= 15
             self.state = jumping
-
 
 
 class DK(pygame.sprite.Sprite):
@@ -135,25 +136,27 @@ class DK(pygame.sprite.Sprite):
 class stair(pygame.sprite.Sprite):
     def __init__(self, tile_img, i, n):
         pygame.sprite.Sprite.__init__(self)
-        tile_img = pygame.transform.scale(tile_img, (40, 40))
+        tile_img = pygame.transform.scale(tile_img, (40, 60))
         self.image = tile_img
         self.rect = self.image.get_rect()
-        self.rect.x = 40 * n
-        self.rect.y = 40 * i
+        self.rect.x = 40 * n 
+        self.rect.y = 40 * i - 30
+
 
 all_barril = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_stairs = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
+final = pygame.sprite.Group()
 
 
 MAP = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -178,10 +181,12 @@ for i in range(len(MAP)):
                 tile = Tile(parede, i, n, incl)
                 all_sprites.add(tile)
                 blocks.add(tile)
-            if tile_type == 2:
+            if tile_type == 2 or tile_type == 3:
                 tile1 = stair(escada, i, n)
                 all_sprites.add(tile1)
                 all_stairs.add(tile1)
+            if tile_type == 3:
+                final.add(tile1)
             incl-=0.8
 trator = True
 dk = DK(dk)
@@ -191,13 +196,15 @@ all_sprites.add(ball)
 all_sprites.add(barrel)
 all_sprites.add(dk)
 all_barril.add(barrel)
+final.add()
 clock = pygame.time.Clock()
 FPS = 60
 while game:
     clock.tick(FPS)
     cstr = pygame.sprite.spritecollide(ball, all_stairs, False)
     cbck = pygame.sprite.spritecollide(ball, ball.blocks, False)
-    if tmp%180 == 0:
+    clear = pygame.sprite.spritecollide(ball, final, False)
+    if tmp%120 == 0:
         barrel = barril(barrel_img, 12, 4, blocks)
         all_sprites.add(barrel)
         all_barril.add(barrel)
@@ -209,19 +216,23 @@ while game:
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_LEFT and ball.state != climbing:
-                    ball.speedx -= 8
+                    ball.speedx -= 6
                 elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx += 8
+                    ball.speedx += 6
                 elif event.key == pygame.K_UP and ball.state != climbing:
                     ball.jump()
+                elif event.key == pygame.K_SPACE and clear !=[] and ball.state == still:
+                    ball.state = climbing
+                    ball.speedx = 0
+                    level = False
                 elif event.key == pygame.K_SPACE and cstr != [] and ball.state == still:
                     ball.state = climbing
                     ball.speedx = 0
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT and ball.state != climbing: 
-                    ball.speedx += 8
+                    ball.speedx =0
                 elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx -= 8
+                    ball.speedx =0
     if ball.state == climbing:
         if trator == True:
             ball.rect.y = cstr[0].rect.y
@@ -235,12 +246,16 @@ while game:
             ball.speedy = 0
             Trator = True
     tmp +=1
-                
-
+    if level == False and ball.speedy >= 0:
+        pygame.quit()
 
     morreu = pygame.sprite.spritecollide(ball, all_barril, False)
-    #if morreu != []:
-     #   pygame.quit()
+    if morreu != []:
+        vidas-=1
+        ball.rect.x = 700
+        ball.rect.bottom = 700
+    
+    
 
     window.fill((0, 0, 0))
     #window.blit(bg, (0, 0))
@@ -248,6 +263,11 @@ while game:
 
     all_sprites.update()
     all_sprites.draw(window)
+
+    text_surface = vida_img.render(chr(9829) * vidas, True, (255, 0, 0))
+    text_rect = text_surface.get_rect()
+    text_rect.bottomleft = (10, HEIGHT - 10)
+    window.blit(text_surface, text_rect)
     pygame.display.update()
 
 pygame.quit()
