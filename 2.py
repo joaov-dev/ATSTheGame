@@ -1,3 +1,4 @@
+from tkinter.ttk import Widget
 import pygame 
 vidas = 3
 pygame.init()
@@ -29,6 +30,8 @@ menu_height = menu_width
 menu = pygame.transform.scale(menu, (menu_height, menu_width))
 over =  pygame.image.load("assets/DonkeyKong-master/game-over-screen.png").convert_alpha()
 over = pygame.transform.scale(over, (menu_height, menu_width))
+win =  pygame.image.load("assets/DonkeyKong-master/win-screen.png").convert_alpha()
+win = pygame.transform.scale(win, (menu_height, menu_width))
 
 
 vel_barril = -7
@@ -38,8 +41,12 @@ pontuacao=0
 pontosx = 10
 pontosy = 10
 fonte = pygame.font.Font("freesansbold.ttf", 32)
+highscore = 0
 def scoreboard(x,y):
     score = fonte.render("Score: " + str(pontuacao), True, (255, 255, 255))
+    window.blit(score, (x,y))
+def highscoreboard(x,y):
+    score = fonte.render(str(highscore), True, (255, 255, 255))
     window.blit(score, (x,y))
 
     
@@ -53,13 +60,13 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         if i%2 ==0 :
             self.rect.x = 40 * n
-            self.rect.y = 40 * i + incl
+            self.rect.y = 40 * i 
         elif i == 20:
             self.rect.x = 40 * n
-            self.rect.y = 40 * i - incl
+            self.rect.y = 40 * i 
         else:
             self.rect.x = 40 * n
-            self.rect.y = 40 * i - incl
+            self.rect.y = 40 * i
 
 class ladder(pygame.sprite.Sprite):
     def __init__(self, tile_img):
@@ -138,7 +145,8 @@ class bola(pygame.sprite.Sprite):
             
     def jump(self):
         if self.state == still:
-            self.speedy -= 15
+            
+            self.speedy -= 20
             self.state = jumping
 
 
@@ -150,6 +158,12 @@ class DK(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 440
         self.rect.bottom = 128
+    def joga(self):
+        self.image = pygame.image.load('assets/DonkeyKong-master/dkLeft.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (100,100))
+    def bate(self):
+        self.image =  pygame.image.load('assets/imagensDK/dkForward.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (100,100))
 
 class stair(pygame.sprite.Sprite):
     def __init__(self, tile_img, i, n):
@@ -223,10 +237,14 @@ while game:
     cstr = pygame.sprite.spritecollide(ball, all_stairs, False)
     cbck = pygame.sprite.spritecollide(ball, ball.blocks, False)
     clear = pygame.sprite.spritecollide(ball, final, False)
+    espera = 0
+    espera += 1
     if tmp%120 == 0:
         barrel = barril(barrel_img, 12, 4, blocks)
         all_sprites.add(barrel)
         all_barril.add(barrel)
+        DK.joga (dk)
+        DK.bate(dk)
     for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -234,11 +252,19 @@ while game:
 
             if event.type == pygame.KEYDOWN:
                 if game_state == "game over":
-                    if event.key == pygame.K_SPACE:
-                        game_state = "jogando"
+                    if event.key == pygame.K_r:
+                        game_state = "menu"
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
+                if game_state == "win":
+                    if event.key == pygame.K_r:
+                        game_state = "menu"
+                        level = True
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+
                 if game_state == "menu":
+                    vidas = 3
                     if event.key == pygame.K_SPACE:
                         game_state = "jogando"
                 if game_state == "jogando":
@@ -277,9 +303,15 @@ while game:
         if barrel.rect.y >= 0:
             pontuacao += 1
         tmp +=1
-        if level == False and ball.speedy >= 0:
-            pygame.quit()
-
+        if level == False and ball.speedy >= 0: 
+            game_state = "win"
+            ball.rect.x = 700
+            ball.rect.bottom = 700
+        if ball.rect.top >= HEIGHT:
+            game_state = "game over"
+            ball.rect.x = 700
+            ball.rect.bottom = 700
+ 
         morreu = pygame.sprite.spritecollide(ball, all_barril, False)
         if morreu != []:
             vidas-=1
@@ -291,21 +323,48 @@ while game:
         window.fill((0,0,0))
         all_sprites.draw(window)
 
+        
         text_surface = vida_img.render(chr(9829) * vidas, True, (255, 0, 0))
         text_rect = text_surface.get_rect()
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
+        pontosx = WIDTH - 500
+        pontosy = 10
         scoreboard(pontosx,pontosy)
     
     if game_state == "menu":
+        pontuacao = 0
+        window.fill((0,0,0))
         window.blit(menu,(100, 0))
     if game_state == "game over":
+        for barrel in all_barril:
+            barrel.kill()
         pontuacao = 0
         window.fill((0,0,0))
         window.blit(over,(100, 0))
         pontosx = WIDTH/2
         pontosy = HEIGHT/2.2 - 10
+        if pontuacao > highscore:
+            highscore = pontuacao
         scoreboard(pontosx,pontosy)
+        highy = pontosy + 70
+        highx = pontosx + 70
+        highscoreboard(highx, highy)
+    if game_state == "win":
+        for barrel in all_barril:
+            barrel.kill()
+        window.fill((0,0,0))
+        window.blit(win,(100, 0))
+        pontosx = WIDTH/2
+        pontosy = HEIGHT/2.2 - 10
+        if pontuacao > highscore:
+            highscore = pontuacao
+        scoreboard(pontosx,pontosy)
+        highy = pontosy + 70
+        highx = pontosx + 70
+        highscoreboard(highx, highy)
+        
+
 
 
     #window.fill((0, 0, 0))
