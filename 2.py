@@ -21,10 +21,28 @@ ball = pygame.transform.scale(ball, (40, 40))
 escada = pygame.image.load('assets/imagensDK/escada.png').convert_alpha()
 parede = pygame.image.load('assets/imagensDK/plataforma.png').convert_alpha()
 barrel_img = pygame.image.load("assets/imagensDK/barrel1.png").convert_alpha()
-barrel_img = pygame.transform.scale(barrel_img, (30, 30))
+barrel_img = pygame.transform.scale(barrel_img, (15, 15))
 vida_img = pygame.font.Font('assets/PressStart2P.ttf', 28)
+menu =  pygame.image.load("assets/imagensDK/title-screen.png").convert_alpha()
+menu_width = 0.75 * WIDTH
+menu_height = menu_width
+menu = pygame.transform.scale(menu, (menu_height, menu_width))
+over =  pygame.image.load("assets/DonkeyKong-master/game-over-screen.png").convert_alpha()
+over = pygame.transform.scale(over, (menu_height, menu_width))
+
+
 vel_barril = -7
 tmp = 0
+
+pontuacao=0
+pontosx = 10
+pontosy = 10
+fonte = pygame.font.Font("freesansbold.ttf", 32)
+def scoreboard(x,y):
+    score = fonte.render("Score: " + str(pontuacao), True, (255, 255, 255))
+    window.blit(score, (x,y))
+
+    
 
 class Tile(pygame.sprite.Sprite):
 
@@ -199,6 +217,7 @@ all_barril.add(barrel)
 final.add()
 clock = pygame.time.Clock()
 FPS = 60
+game_state = "menu"
 while game:
     clock.tick(FPS)
     cstr = pygame.sprite.spritecollide(ball, all_stairs, False)
@@ -214,60 +233,86 @@ while game:
                 game = False
 
             if event.type == pygame.KEYDOWN:
-
-                if event.key == pygame.K_LEFT and ball.state != climbing:
-                    ball.speedx -= 6
-                elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx += 6
-                elif event.key == pygame.K_UP and ball.state != climbing:
-                    ball.jump()
-                elif event.key == pygame.K_SPACE and clear !=[] and ball.state == still:
-                    ball.state = climbing
-                    ball.speedx = 0
-                    level = False
-                elif event.key == pygame.K_SPACE and cstr != [] and ball.state == still:
-                    ball.state = climbing
-                    ball.speedx = 0
+                if game_state == "game over":
+                    if event.key == pygame.K_SPACE:
+                        game_state = "jogando"
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                if game_state == "menu":
+                    if event.key == pygame.K_SPACE:
+                        game_state = "jogando"
+                if game_state == "jogando":
+                    if event.key == pygame.K_LEFT and ball.state != climbing:
+                        ball.speedx -= 6
+                    elif event.key == pygame.K_RIGHT and ball.state != climbing:
+                        ball.speedx += 6
+                    elif event.key == pygame.K_UP and ball.state != climbing:
+                        ball.jump()
+                    elif event.key == pygame.K_SPACE and clear !=[] and ball.state == still:
+                        ball.state = climbing
+                        ball.speedx = 0
+                        level = False
+                    elif event.key == pygame.K_SPACE and cstr != [] and ball.state == still:
+                        ball.state = climbing
+                        ball.speedx = 0
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT and ball.state != climbing: 
-                    ball.speedx =0
-                elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx =0
-    if ball.state == climbing:
-        if trator == True:
-            ball.rect.y = cstr[0].rect.y
-            ball.rect.x = cstr[0].rect.x
-            trator = False
-        ball.state = climbing
-        if cstr != [] or cbck != []:
-            ball.speedy -= 1
-        else:
-            ball.state = still
-            ball.speedy = 0
-            Trator = True
-    tmp +=1
-    if level == False and ball.speedy >= 0:
-        pygame.quit()
+                if game_state == "jogando":
+                    if event.key == pygame.K_LEFT and ball.state != climbing: 
+                        ball.speedx =0
+                    elif event.key == pygame.K_RIGHT and ball.state != climbing:
+                        ball.speedx =0
+    if game_state == "jogando":
+        if ball.state == climbing:
+            if trator == True:
+                ball.rect.y = cstr[0].rect.y
+                ball.rect.x = cstr[0].rect.x
+                trator = False
+            ball.state = climbing
+            if cstr != [] or cbck != []:
+                ball.speedy -= 1
+            else:
+                ball.state = still
+                ball.speedy = 0
+                Trator = True
+        if barrel.rect.y >= 0:
+            pontuacao += 1
+        tmp +=1
+        if level == False and ball.speedy >= 0:
+            pygame.quit()
 
-    morreu = pygame.sprite.spritecollide(ball, all_barril, False)
-    if morreu != []:
-        vidas-=1
-        ball.rect.x = 700
-        ball.rect.bottom = 700
-    
-    
+        morreu = pygame.sprite.spritecollide(ball, all_barril, False)
+        if morreu != []:
+            vidas-=1
+            ball.rect.x = 700
+            ball.rect.bottom = 700
+        if vidas == 0:
+            game_state = "game over"
+        all_sprites.update()
+        window.fill((0,0,0))
+        all_sprites.draw(window)
 
-    window.fill((0, 0, 0))
+        text_surface = vida_img.render(chr(9829) * vidas, True, (255, 0, 0))
+        text_rect = text_surface.get_rect()
+        text_rect.bottomleft = (10, HEIGHT - 10)
+        window.blit(text_surface, text_rect)
+        scoreboard(pontosx,pontosy)
+    
+    if game_state == "menu":
+        window.blit(menu,(100, 0))
+    if game_state == "game over":
+        pontuacao = 0
+        window.fill((0,0,0))
+        window.blit(over,(100, 0))
+        pontosx = WIDTH/2
+        pontosy = HEIGHT/2.2 - 10
+        scoreboard(pontosx,pontosy)
+
+
+    #window.fill((0, 0, 0))
     #window.blit(bg, (0, 0))
 
 
-    all_sprites.update()
-    all_sprites.draw(window)
-
-    text_surface = vida_img.render(chr(9829) * vidas, True, (255, 0, 0))
-    text_rect = text_surface.get_rect()
-    text_rect.bottomleft = (10, HEIGHT - 10)
-    window.blit(text_surface, text_rect)
+    
     pygame.display.update()
 
 pygame.quit()
