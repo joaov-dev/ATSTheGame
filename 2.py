@@ -7,7 +7,7 @@ falling = 2
 climbing = 3
 WIDTH = 1000
 HEIGHT = 800
-gravity = 0.5
+gravity = 1
 level = True
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('ats')
@@ -23,7 +23,7 @@ parede = pygame.image.load('assets/imagensDK/plataforma.png').convert_alpha()
 barrel_img = pygame.image.load("assets/imagensDK/barrel1.png").convert_alpha()
 barrel_img = pygame.transform.scale(barrel_img, (30, 30))
 vida_img = pygame.font.Font('assets/PressStart2P.ttf', 28)
-vel_barril = -4
+vel_barril = -7
 tmp = 0
 
 class Tile(pygame.sprite.Sprite):
@@ -120,7 +120,7 @@ class bola(pygame.sprite.Sprite):
             
     def jump(self):
         if self.state == still:
-            self.speedy -= 10
+            self.speedy -= 15
             self.state = jumping
 
 
@@ -216,9 +216,9 @@ while game:
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_LEFT and ball.state != climbing:
-                    ball.speedx -= 3
+                    ball.speedx -= 6
                 elif event.key == pygame.K_RIGHT and ball.state != climbing:
-                    ball.speedx += 3
+                    ball.speedx += 6
                 elif event.key == pygame.K_UP and ball.state != climbing:
                     ball.jump()
                 elif event.key == pygame.K_SPACE and clear !=[] and ball.state == still:
@@ -240,7 +240,7 @@ while game:
             trator = False
         ball.state = climbing
         if cstr != [] or cbck != []:
-            ball.speedy = -2
+            ball.speedy -= 1
         else:
             ball.state = still
             ball.speedy = 0
