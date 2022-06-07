@@ -33,6 +33,15 @@ over = pygame.transform.scale(over, (menu_height, menu_width))
 win =  pygame.image.load("assets/DonkeyKong-master/win-screen.png").convert_alpha()
 win = pygame.transform.scale(win, (menu_height, menu_width))
 
+#sons
+deathsound = pygame.mixer.Sound("assets/DonkeyKong-master/death/death.wav")
+bacmusic = pygame.mixer.Sound("assets/DonkeyKong-master/bacmusic/bacmusic.wav")
+introsound = pygame.mixer.Sound("assets/elevator.wav")
+jumpsound = pygame.mixer.Sound("assets/DonkeyKong-master/jump/jump.wav")
+walkingsound = pygame.mixer.Sound("assets/DonkeyKong-master/walking/walking.wav")
+winsound = pygame.mixer.Sound("assets/fortnitewin.wav")
+loosesound = pygame.mixer.Sound("assets/taketheL.wav")
+bruh = pygame.mixer.Sound("assets/bruh.wav")
 
 vel_barril = -7
 tmp = 0
@@ -47,6 +56,9 @@ def scoreboard(x,y):
     window.blit(score, (x,y))
 def highscoreboard(x,y):
     score = fonte.render(str(highscore), True, (255, 255, 255))
+    window.blit(score, (x,y))
+def finalscore(x,y):
+    score = fonte.render( str(pontuacao), True, (255, 255, 255))
     window.blit(score, (x,y))
 
     
@@ -190,8 +202,8 @@ MAP = [
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -220,6 +232,8 @@ for i in range(len(MAP)):
             if tile_type == 3:
                 final.add(tile1)
             incl-=0.8
+retry = fonte.render('(r)', True, (255, 255, 255))
+esc = fonte.render('(esc)', True, (255, 255, 255))
 trator = True
 dk = DK(dk)
 ball = bola(ball, 12, 4, blocks)
@@ -233,18 +247,15 @@ clock = pygame.time.Clock()
 FPS = 60
 game_state = "menu"
 while game:
+    #bacmusic.play()
     clock.tick(FPS)
     cstr = pygame.sprite.spritecollide(ball, all_stairs, False)
     cbck = pygame.sprite.spritecollide(ball, ball.blocks, False)
     clear = pygame.sprite.spritecollide(ball, final, False)
-    espera = 0
-    espera += 1
     if tmp%120 == 0:
         barrel = barril(barrel_img, 12, 4, blocks)
         all_sprites.add(barrel)
         all_barril.add(barrel)
-        DK.joga (dk)
-        DK.bate(dk)
     for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -268,13 +279,18 @@ while game:
                     if event.key == pygame.K_SPACE:
                         game_state = "jogando"
                 if game_state == "jogando":
+                    introsound.stop()
                     if event.key == pygame.K_LEFT and ball.state != climbing:
                         ball.speedx -= 6
+                        #walkingsound.play()
                     elif event.key == pygame.K_RIGHT and ball.state != climbing:
                         ball.speedx += 6
+                        #walkingsound.play()
                     elif event.key == pygame.K_UP and ball.state != climbing:
+                        jumpsound.play()
                         ball.jump()
                     elif event.key == pygame.K_SPACE and clear !=[] and ball.state == still:
+                        walkingsound.play()
                         ball.state = climbing
                         ball.speedx = 0
                         level = False
@@ -314,6 +330,8 @@ while game:
  
         morreu = pygame.sprite.spritecollide(ball, all_barril, False)
         if morreu != []:
+            deathsound.play()
+            #bruh.play()
             vidas-=1
             ball.rect.x = 700
             ball.rect.bottom = 700
@@ -333,10 +351,14 @@ while game:
         scoreboard(pontosx,pontosy)
     
     if game_state == "menu":
+        winsound.stop()
+        loosesound.stop()
+        introsound.play()
         pontuacao = 0
         window.fill((0,0,0))
         window.blit(menu,(100, 0))
     if game_state == "game over":
+        loosesound.play()
         for barrel in all_barril:
             barrel.kill()
         pontuacao = 0
@@ -346,11 +368,14 @@ while game:
         pontosy = HEIGHT/2.2 - 10
         if pontuacao > highscore:
             highscore = pontuacao
-        scoreboard(pontosx,pontosy)
+        finalscore(pontosx,pontosy)
         highy = pontosy + 70
         highx = pontosx + 70
         highscoreboard(highx, highy)
+        window.blit(retry,(pontosx +20, highy + 130))
+        window.blit(esc,(pontosx , highy + 190))
     if game_state == "win":
+        winsound.play()
         for barrel in all_barril:
             barrel.kill()
         window.fill((0,0,0))
@@ -359,11 +384,12 @@ while game:
         pontosy = HEIGHT/2.2 - 10
         if pontuacao > highscore:
             highscore = pontuacao
-        scoreboard(pontosx,pontosy)
+        finalscore(pontosx,pontosy)
         highy = pontosy + 70
         highx = pontosx + 70
         highscoreboard(highx, highy)
-        
+        window.blit(retry,(pontosx +20, highy + 130))
+        window.blit(esc,(pontosx , highy + 190))
 
 
 
