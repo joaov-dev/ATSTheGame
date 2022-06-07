@@ -32,6 +32,8 @@ over =  pygame.image.load("assets/DonkeyKong-master/game-over-screen.png").conve
 over = pygame.transform.scale(over, (menu_height, menu_width))
 win =  pygame.image.load("assets/DonkeyKong-master/win-screen.png").convert_alpha()
 win = pygame.transform.scale(win, (menu_height, menu_width))
+climbing = pygame.image.load("assets/DonkeyKong-master/marioClimb1.png").convert_alpha()
+climbing = pygame.transform.scale(climbing, (40, 40))
 
 #sons
 deathsound = pygame.mixer.Sound("assets/DonkeyKong-master/death/death.wav")
@@ -42,6 +44,7 @@ walkingsound = pygame.mixer.Sound("assets/DonkeyKong-master/walking/walking.wav"
 winsound = pygame.mixer.Sound("assets/fortnitewin.wav")
 loosesound = pygame.mixer.Sound("assets/taketheL.wav")
 bruh = pygame.mixer.Sound("assets/bruh.wav")
+boom = pygame.mixer.Sound("assets/vineboom.wav")
 
 vel_barril = -7
 tmp = 0
@@ -154,7 +157,6 @@ class bola(pygame.sprite.Sprite):
                 self.rect.bottom = i.rect.top
                 self.speedy = 0
                 self.state = still
-            
     def jump(self):
         if self.state == still:
             
@@ -294,6 +296,7 @@ while game:
                         ball.state = climbing
                         ball.speedx = 0
                         level = False
+                        
                     elif event.key == pygame.K_SPACE and cstr != [] and ball.state == still:
                         ball.state = climbing
                         ball.speedx = 0
@@ -330,8 +333,9 @@ while game:
  
         morreu = pygame.sprite.spritecollide(ball, all_barril, False)
         if morreu != []:
-            deathsound.play()
-            #bruh.play()
+            #deathsound.play()
+            bruh.play()
+            boom.play()
             vidas-=1
             ball.rect.x = 700
             ball.rect.bottom = 700
@@ -358,6 +362,7 @@ while game:
         window.fill((0,0,0))
         window.blit(menu,(100, 0))
     if game_state == "game over":
+        #boom.play()
         loosesound.play()
         for barrel in all_barril:
             barrel.kill()
