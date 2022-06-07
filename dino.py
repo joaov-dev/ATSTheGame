@@ -75,7 +75,7 @@ while game:
         if event.type == pygame.QUIT:
             game = False
         if event.type == pygame.KEYDOWN:   
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_SPACE:
                 player.jump(dino)
 
     window.fill((255, 255, 255)) 
