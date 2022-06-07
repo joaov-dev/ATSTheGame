@@ -5,7 +5,8 @@ pygame.init()
 
 WIDTH = 1500
 HEIGHT = 400
-speed = 14
+speed = 12
+duck=5
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('dino')
 game = True
@@ -16,14 +17,16 @@ dino = pygame.image.load(os.path.join("assetsdino/Dino", "DinoRun1.png"))
 cactus = [pygame.image.load(os.path.join("assetsdino/Cactus", "SmallCactus1.png")),pygame.image.load(os.path.join("assetsdino/Cactus", "SmallCactus2.png")),pygame.image.load(os.path.join("assetsdino/Cactus", "SmallCactus3.png")),pygame.image.load(os.path.join("assetsdino/Cactus", "LargeCactus1.png")),pygame.image.load(os.path.join("assetsdino/Cactus", "LargeCactus2.png")),pygame.image.load(os.path.join("assetsdino/Cactus", "LargeCactus3.png"))]
 ptero = pygame.image.load(os.path.join("assetsdino/Bird", "Bird1.png"))
 exist = False
+tmp = 0
 class obs(pygame.sprite.Sprite):
     def __init__(self, img):
     
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.mask=pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.left = 1500
-        self.rect.bottom = 370
+        self.rect.bottom = 375
         self.speedx = 0 
     def update(self):
         self.rect.x += self.speedx
@@ -34,6 +37,7 @@ class player(pygame.sprite.Sprite):
     
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.mask=pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = 200
         self.rect.bottom = 370
@@ -41,16 +45,29 @@ class player(pygame.sprite.Sprite):
         self.state = still
 
     def update(self):
+        self.mask=pygame.mask.from_surface(self.image)
         self.rect.y += self.speedy
         if self.state == jumping:
-            self.speedy += 5
+            self.speedy += 4
         if self.rect.bottom >= 350:
             self.speedy=0
-            self.state=still
+            if self.state != duck:
+                self.state=still
     def jump(self):
-        if self.state == still:
+        if self.state == still and self.state != duck: 
             self.speedy -= 40
             self.state = jumping
+    def down(self):
+        if self.state == still:
+            self.image=pygame.image.load(os.path.join("assetsdino/Dino", "DinoDuck1.png"))
+            self.state=duck
+            self.rect.bottom = 410
+    def up(self):
+        if self.state == duck:
+            self.image=pygame.image.load(os.path.join("assetsdino/Dino", "DinoRun1.png"))
+            self.state=still
+            self.rect.bottom = 375
+        
 all_sprites = pygame.sprite.Group()
 all_obs = pygame.sprite.Group()
 dino = player(dino)
@@ -75,9 +92,14 @@ while game:
         if event.type == pygame.QUIT:
             game = False
         if event.type == pygame.KEYDOWN:   
-            if event.key == pygame.K_SPACE:
-                player.jump(dino)
-
+            if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                if dino.state == still:
+                    player.jump(dino)
+            if event.key == pygame.K_DOWN:
+                player.down(dino)
+        if event.type == pygame.KEYUP:   
+            if event.key == pygame.K_DOWN:
+                player.up(dino)
     window.fill((255, 255, 255)) 
     window.blit(track,(track_x,360))
     window.blit(track,(track_width+track_x,360))
@@ -91,6 +113,12 @@ while game:
         cac.kill()
         exist = False
         all_obs
+    morreu = pygame.sprite.spritecollide(dino, all_obs, False)
+    if morreu != []:
+        pygame.quit()
+    if tmp % 180 == 0 and speed <= 20:
+        speed += 1
+    tmp +=1
     all_obs. add(cac)
     all_obs.update()
     all_obs.draw(window)
