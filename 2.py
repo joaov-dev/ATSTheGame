@@ -171,7 +171,7 @@ class DK(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = 440
-        self.rect.bottom = 128
+        self.rect.bottom = 120
     def joga(self):
         self.image = pygame.image.load('assets/DonkeyKong-master/dkLeft.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (100,100))
