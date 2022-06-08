@@ -285,9 +285,13 @@ while game:
                     introsound.stop()
                     if event.key == pygame.K_LEFT and ball.state != climbing:
                         ball.speedx -= 6
+                        ball.image=pygame.image.load('assets/imagensDK/run-left.png').convert_alpha()
+                        ball.image = pygame.transform.scale(ball.image, (40, 40))
                         #walkingsound.play()
                     elif event.key == pygame.K_RIGHT and ball.state != climbing:
                         ball.speedx += 6
+                        ball.image=pygame.image.load('assets/imagensDK/run-right.png').convert_alpha()
+                        ball.image = pygame.transform.scale(ball.image, (40, 40))
                         #walkingsound.play()
                     elif event.key == pygame.K_UP and ball.state != climbing:
                         jumpsound.play()
@@ -333,7 +337,14 @@ while game:
             game_state = "game over"
             ball.rect.x = 700
             ball.rect.bottom = 700
- 
+        
+        dkb = pygame.sprite.spritecollide(dk, all_barril, False)
+        if dkb != []:
+            dk.image = pygame.image.load('assets/DonkeyKong-master/dkleft.png').convert_alpha()
+            dk.image = pygame.transform.scale(dk.image, (100,100))
+        else:
+            dk.image = pygame.image.load('assets/imagensDK/dkForward.png').convert_alpha()
+            dk.image = pygame.transform.scale(dk.image, (100,100))
         morreu = pygame.sprite.spritecollide(ball, all_barril, False)
         if morreu != []:
             #deathsound.play()
