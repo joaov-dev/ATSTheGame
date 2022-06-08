@@ -249,7 +249,6 @@ clock = pygame.time.Clock()
 FPS = 60
 game_state = "menu"
 while game:
-    #bacmusic.play()
     clock.tick(FPS)
     cstr = pygame.sprite.spritecollide(ball, all_stairs, False)
     cbck = pygame.sprite.spritecollide(ball, ball.blocks, False)
@@ -266,11 +265,13 @@ while game:
             if event.type == pygame.KEYDOWN:
                 if game_state == "game over":
                     if event.key == pygame.K_r:
+                        introsound.play()
                         game_state = "menu"
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                 if game_state == "win":
                     if event.key == pygame.K_r:
+                        introsound.play()
                         game_state = "menu"
                         level = True
                     if event.key == pygame.K_ESCAPE:
@@ -324,9 +325,11 @@ while game:
         tmp +=1
         if level == False and ball.speedy >= 0: 
             game_state = "win"
+            winsound.play()
             ball.rect.x = 700
             ball.rect.bottom = 700
         if ball.rect.top >= HEIGHT:
+            loosesound.play()
             game_state = "game over"
             ball.rect.x = 700
             ball.rect.bottom = 700
@@ -340,6 +343,7 @@ while game:
             ball.rect.x = 700
             ball.rect.bottom = 700
         if vidas == 0:
+            loosesound.play()
             game_state = "game over"
         all_sprites.update()
         window.fill((0,0,0))
@@ -357,13 +361,10 @@ while game:
     if game_state == "menu":
         winsound.stop()
         loosesound.stop()
-        introsound.play()
         pontuacao = 0
         window.fill((0,0,0))
         window.blit(menu,(100, 0))
     if game_state == "game over":
-        #boom.play()
-        loosesound.play()
         for barrel in all_barril:
             barrel.kill()
         pontuacao = 0
@@ -380,7 +381,6 @@ while game:
         window.blit(retry,(pontosx +20, highy + 130))
         window.blit(esc,(pontosx , highy + 190))
     if game_state == "win":
-        winsound.play()
         for barrel in all_barril:
             barrel.kill()
         window.fill((0,0,0))
