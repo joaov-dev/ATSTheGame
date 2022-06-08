@@ -353,6 +353,9 @@ while game:
             vidas-=1
             ball.rect.x = 700
             ball.rect.bottom = 700
+            for i in all_barril:
+                if i.rect.bottom >=HEIGHT-300:
+                    i.kill()
         if vidas == 0:
             loosesound.play()
             game_state = "game over"
