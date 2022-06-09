@@ -6,7 +6,7 @@
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/iuricode/README-template?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/iuricode/README-template?style=for-the-badge)
 
-<img src="https://youtu.be/kNdpymtioWM" alt="exemplo jogo">
+Exemplo vídeo do jogo: https://youtu.be/kNdpymtioWM
 
 > Projeto desenvolvido para a entrega final da aula de Desenvolvimento de Software 2022.1. O DonkeyKong consiste em sobreviver o máximo de tempo, desviando dos barris, para alcançar uma pontuação alta (PS.: a pontuação só sera levada em consideração se o jogador ganhar o jogo)
 
